@@ -1,78 +1,73 @@
-// Sketch inspired by organic roots, moiré, fractal and glitch techniques
-// Using recursion, randomness, and effective complexity
-// Developed in p5.js
-
 let roots = [];
 let count = 0;
 
 function setup() {
-  createCanvas(windowWidth, windowHeight);
-  background("#231a10"); // Dark soil color
-  stroke("#b4ffc8"); // Light green roots
+  createCanvas(windowWidth, windowHeight, WEBGL);
+  background("#45FA89");
+  stroke("#FA3F09");
   noFill();
-  roots.push(new Root(width / 2, height)); // Start with one root at the bottom center
+  roots.push(new Root(0, 0, 0)); // Start at center (0,0,0) in 3D space
 }
 
 function draw() {
-  // Dynamic stroke weight to add 3D-like depth
-  strokeWeight(frameCount / 150);
+  background("#45FA89"); // Refresh background every frame
+  orbitControl(); // Allow mouse to rotate and zoom the scene
+
+  strokeWeight(1.5 + frameCount / 300);
 
   for (let r of roots) {
     r.grow();
   }
 
-  // Occasionally add new roots, inspired by fungal networks
-  if (frameCount % 15 === 0 && roots.length < 1200) {
+  if (frameCount % 10 === 0 && roots.length < 1000) {
     let r = random(roots);
-    roots.push(new Root(r.x, r.y));
+    roots.push(new Root(r.x, r.y, r.z));
   }
 }
 
-// Root class: grows recursively and organically
 class Root {
-  constructor(x, y) {
+  constructor(x, y, z) {
     this.x = x;
     this.y = y;
-    this.angle = random(TWO_PI);
+    this.z = z;
+    this.angleXY = random(TWO_PI);
+    this.angleZ = random(TWO_PI);
     this.speed = random(0.5, 2);
-    this.lifespan = 0; // Track how long the root has been growing
+    this.lifespan = 0;
   }
 
   grow() {
-    let nextX = this.x + cos(this.angle) * this.speed;
-    let nextY = this.y + sin(this.angle) * this.speed;
+    let nextX = this.x + cos(this.angleXY) * this.speed;
+    let nextY = this.y + sin(this.angleXY) * this.speed;
+    let nextZ = this.z + sin(this.angleZ) * this.speed;
 
-    line(this.x, this.y, nextX, nextY);
+    line(this.x, this.y, this.z, nextX, nextY, nextZ);
 
     this.x = nextX;
     this.y = nextY;
+    this.z = nextZ;
 
-    // Slight random walk for organic feel
-    this.angle += random(-0.5, 0.5);
+    this.angleXY += random(-0.5, 0.5);
+    this.angleZ += random(-0.5, 0.5);
 
     this.lifespan++;
 
-    // Recursively split into new branches
-    if (random(1) < 0.005 && this.lifespan > 20) {
-      roots.push(new Root(this.x, this.y));
+    if (random(1) < 0.005 && this.lifespan > 15) {
+      roots.push(new Root(this.x, this.y, this.z));
     }
   }
 }
 
-// Switch background and stroke color on mouse click (glitch-like effect)
 function mousePressed() {
   if (count === 0) {
-    background(180, 255, 200); // Light background
-    stroke("#231a10"); // Dark roots
+    stroke("#231a10");
     count = 1;
   } else {
-    background("#231a10"); // Dark background
-    stroke("#b4ffc8"); // Light roots
+    stroke("#b4ffc8");
     count = 0;
   }
 }
 
-// Optional: Handle window resizing
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
 }
