@@ -4,36 +4,32 @@ let osc = null;
 
 function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
-  background(20); // Dark background
-  stroke(255); // Bright white lines
+  background(20);
+  stroke(255);
   noFill();
-  roots.push(new Root(0, 0, 0)); // Start from center
-  console.log("Sketch started. Click to activate sound.");
+  roots.push(new Root(0, 0, 0));
+  console.log("Sketch loaded. Click to begin sound.");
 }
 
 function draw() {
-  background(20); // Refresh every frame
-  orbitControl(); // Allow camera control
+  background(20);
+  orbitControl();
 
-  strokeWeight(0.5 + noise(frameCount * 0.01) * 1.5);
+  strokeWeight(0.3 + noise(frameCount * 0.01) * 1.5);
 
-  // Grow all current roots
   for (let r of roots) {
     r.grow();
   }
 
-  // Add new recursive root occasionally
   if (frameCount % 10 === 0 && roots.length < 2000) {
     let r = random(roots);
     roots.push(new Root(r.x, r.y, r.z));
   }
 
-  // Prevent crash if too many roots
   if (roots.length > 5000) {
     roots.splice(0, 500);
   }
 
-  // Update oscillator if active
   if (osc) {
     let freq = 100 + sin(frameCount * 0.01) * 50 + roots.length * 0.05;
     osc.freq(freq);
@@ -73,10 +69,8 @@ class Root {
 }
 
 function mousePressed() {
-  console.log("Mouse clicked");
   getAudioContext().resume();
 
-  // Create oscillator on first interaction
   if (!osc) {
     osc = new p5.Oscillator("sine");
     osc.start();
@@ -88,10 +82,10 @@ function mousePressed() {
   count++;
 
   if (count % 2 === 0) {
-    stroke(random(255), random(255), random(255)); // random color
+    stroke(random(255), random(255), random(255));
     osc.amp(0.1);
   } else {
-    stroke(255); // reset to white
+    stroke(255);
     osc.amp(0.02);
   }
 }
