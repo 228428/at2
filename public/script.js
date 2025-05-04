@@ -1,10 +1,10 @@
-// We'll store all the root branches in this array
+// Used to store all the root branches in this array
 let roots = [];
 
 // A simple counter to help us toggle stroke colors and sound intensity
 let count = 0;
 
-// Our sound oscillator — we’ll start it after a user click
+// My sound oscillator — will start it after a user click
 let osc = null;
 
 function setup() {
@@ -51,8 +51,6 @@ function draw() {
     osc.freq(freq);
   }
 }
-
-// This is a "class" — like a recipe for making root objects
 class Root {
   constructor(x, y, z) {
     // Starting point for the root
